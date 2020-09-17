@@ -21,7 +21,9 @@ app.get('/api/', (req, res) => {
 });
 
 app.get('/api/search', (req, res) => {
-  const query = req.query.query.toLowerCase();
+  const { query } = req.query;
+  if (!query) res.json(null);
+  const subjectQuery = query.toLowerCase();
 
   const subjectList = [
     {
@@ -90,20 +92,18 @@ app.get('/api/search', (req, res) => {
 
   for (let i = 0; i < subjectList.length; i++) {
     const subjectItem = subjectList[i];
-    const { title } = subjectItem;
+    const title = subjectItem.title.toLowerCase();
 
-    if (title.toLowerCase().includes(query)) {
+    if (title.includes(subjectQuery)) {
       subject = subjectItem;
 
       break;
     }
   }
 
-  const result = {
+  res.json({
     subject,
-  };
-
-  res.json(result);
+  });
 });
 
 app.listen(PORT);
